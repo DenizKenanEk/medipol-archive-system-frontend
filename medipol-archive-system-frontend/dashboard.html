@@ -1,0 +1,491 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medipol Arşiv Sistemi - Dashboard</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f6fb;
+      color: #1f2d3d;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logo {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-logo img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .system-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .system-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.78);
+      margin-bottom: 26px;
+    }
+
+    .role-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-menu a {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding-top: 18px;
+    }
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid #dde6f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h1 {
+      font-size: 24px;
+      color: #1f2f6d;
+      margin-bottom: 4px;
+    }
+
+    .topbar-left p {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-box {
+      background: #eef3fb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #31425e;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #e83c4f;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .welcome-card {
+      background: linear-gradient(135deg, #1f2f6d, #30489c);
+      color: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 35px rgba(31, 47, 109, 0.18);
+    }
+
+    .welcome-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .welcome-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 850px;
+    }
+
+    .tools-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-box,
+    .quick-box {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 25px rgba(23, 35, 79, 0.06);
+      border: 1px solid #e3ebf5;
+    }
+
+    .search-box {
+      flex: 2;
+      min-width: 280px;
+    }
+
+    .quick-box {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-box h3,
+    .quick-box h3 {
+      color: #1f2f6d;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #d4dfec;
+      border-radius: 10px;
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .section-title h3 {
+      font-size: 22px;
+      color: #1f2f6d;
+    }
+
+    .section-title span {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .department-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+    }
+
+    .department-card {
+      background: white;
+      border: 1px solid #e4ebf4;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 24px rgba(23, 35, 79, 0.06);
+      transition: 0.25s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .department-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #1f2f6d, #4a67d6);
+    }
+
+    .department-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 30px rgba(23, 35, 79, 0.10);
+    }
+
+    .department-card h4 {
+      color: #1f2f6d;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .department-card p {
+      color: #65758c;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .go-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1f2f6d;
+    }
+
+    .bottom-note {
+      margin-top: 26px;
+      background: #eef3fb;
+      border-left: 5px solid #1f2f6d;
+      padding: 16px 18px;
+      border-radius: 10px;
+      color: #44556f;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 16px;
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+      </div>
+
+      <div class="system-title">Medipol Arşiv Sistemi</div>
+      <div class="system-subtitle">Ankara Medipol Üniversitesi</div>
+
+      <div class="role-badge">
+        Aktif Rol: <strong id="sidebarRole">Öğrenci</strong>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" class="active" id="homeMenuLink">Ana Sayfa</a>
+        <a href="#departmentGrid">Bölümler</a>
+        <a href="#" id="notesMenuLink">Notlar</a>
+        <a href="#" id="uploadMenuLink">Not Ekle</a>
+        <a href="#" id="favoritesMenuLink">Favoriler</a>
+        <a href="#" id="profileMenuLink">Profil</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        © 2026 Medipol Arşiv Sistemi
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Medipol Arşiv</h1>
+          <p>Bölüm kartları üzerinden arşiv içeriklerine ulaşabilirsiniz.</p>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-box" id="userBox">Rol: Öğrenci</div>
+          <button class="logout-btn" onclick="window.location.href='login.html'">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="welcome-card">
+          <h2 id="welcomeTitle">Hoş geldin</h2>
+          <p id="welcomeText">
+            Ankara Medipol Üniversitesi arşiv sistemine giriş yaptınız.
+          </p>
+        </section>
+
+        <div class="tools-row">
+          <div class="search-box">
+            <h3>Bölüm Ara</h3>
+            <input type="text" class="search-input" id="searchInput" placeholder="Bölüm adı yazın...">
+          </div>
+
+          <div class="quick-box">
+            <h3>Hızlı Bilgi</h3>
+            <p id="quickText">
+              Not eklemek için sol menüdeki “Not Ekle” bağlantısını kullanabilirsiniz.
+            </p>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <h3>Mühendislik Fakültesi Bölümleri</h3>
+          <span>Ankara Medipol Üniversitesi Mühendislik Fakültesi bölümleri listelenmiştir.</span>
+        </div>
+
+        <div class="department-grid" id="departmentGrid">
+          <div class="department-card" data-name="Bilgisayar Mühendisliği">
+            <h4>Bilgisayar Mühendisliği (İngilizce)</h4>
+            <p>Yazılım ve mühendislik ders içerikleri.</p>
+            <div class="go-text">Bölüme Git →</div>
+          </div>
+
+          <div class="department-card" data-name="Elektrik Elektronik">
+            <h4>Elektrik-Elektronik Mühendisliği (İngilizce)</h4>
+            <p>Elektrik ve elektronik mühendisliği dersleri.</p>
+            <div class="go-text">Bölüme Git →</div>
+          </div>
+        </div>
+
+        <div class="bottom-note">
+          Not: Sonraki aşamada bu bölüm kartlarına tıklandığında ayrı sayfada ders listeleri açılacak.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role") || "student";
+
+    const sidebarRole = document.getElementById("sidebarRole");
+    const userBox = document.getElementById("userBox");
+    const welcomeTitle = document.getElementById("welcomeTitle");
+    const welcomeText = document.getElementById("welcomeText");
+    const quickText = document.getElementById("quickText");
+
+    const homeMenuLink = document.getElementById("homeMenuLink");
+    const notesMenuLink = document.getElementById("notesMenuLink");
+    const uploadMenuLink = document.getElementById("uploadMenuLink");
+    const favoritesMenuLink = document.getElementById("favoritesMenuLink");
+    const profileMenuLink = document.getElementById("profileMenuLink");
+  
+
+    homeMenuLink.href = "dashboard.html?role=" + role;
+    notesMenuLink.href = "notes.html?role=" + role;
+    uploadMenuLink.href = "upload-note.html?role=" + role;
+    favoritesMenuLink.href = "favorites.html?role=" + role;
+    profileMenuLink.href = "profile.html?role=" + role;
+
+    if (role === "teacher") {
+      sidebarRole.textContent = "Öğretmen";
+      userBox.textContent = "Rol: Öğretmen";
+      welcomeTitle.textContent = "Hoş geldiniz hocam";
+      welcomeText.textContent = "Öğretmen paneline giriş yaptınız. Bölümlere ait içerikleri görüntüleyebilir ve not yükleme işlemlerini yönetebilirsiniz.";
+      quickText.textContent = "Not yüklemek için sol menüdeki “Not Ekle” bağlantısını kullanabilirsiniz.";
+    } else {
+      sidebarRole.textContent = "Öğrenci";
+      userBox.textContent = "Rol: Öğrenci";
+      welcomeTitle.textContent = "Hoş geldin";
+      welcomeText.textContent = "Öğrenci paneline giriş yaptınız. Bölümlere ait ders notlarını ve arşiv içeriklerini görüntüleyebilirsiniz.";
+      quickText.textContent = "Not eklemek için sol menüdeki “Not Ekle” bağlantısını kullanabilirsiniz.";
+    }
+
+    const searchInput = document.getElementById("searchInput");
+    const cards = document.querySelectorAll(".department-card");
+
+    searchInput.addEventListener("input", function () {
+      const value = this.value.toLowerCase();
+
+      cards.forEach(card => {
+        const name = card.getAttribute("data-name").toLowerCase();
+        card.style.display = name.includes(value) ? "block" : "none";
+      });
+    });
+
+    cards.forEach(card => {
+      card.addEventListener("click", function () {
+        const departmentName = this.getAttribute("data-name");
+        window.location.href =
+          "department.html?name=" + encodeURIComponent(departmentName) + "&role=" + role;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mebis Arşiv Sistemi Giriş</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: url('https://www.studyu.org/wp-content/uploads/2024/08/ankara_medipol-background-photo.webp') no-repeat center center/cover;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(230, 236, 243, 0.55);
+      backdrop-filter: blur(3px);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 90px;
+      background-color: #1f2f6d;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-box {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 230px;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-box img {
+      height: 70px;
+      width: auto;
+    }
+
+    .title-area {
+      color: white;
+      font-size: 20px;
+      font-weight: 500;
+      margin-left: 230px;
+      width: calc(100% - 230px);
+      text-align: center;
+      padding-right: 100px;
+    }
+
+    .title-area span {
+      font-weight: 700;
+    }
+
+    .flags {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 10px;
+    }
+
+    .flags img {
+      width: 28px;
+      height: 20px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .flags img:hover {
+      transform: scale(1.08);
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100vh - 90px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      padding: 40px 36px 30px;
+      text-align: center;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.20);
+    }
+
+    .login-card h1 {
+      font-size: 24px;
+      color: #10285f;
+      margin-bottom: 10px;
+    }
+
+    .login-card p {
+      color: #31496d;
+      margin-bottom: 24px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .role-switch {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .role-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(223, 231, 242, 0.85);
+      color: #1f2f6d;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .role-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .role-btn.active {
+      background-color: #1f2f6d;
+      color: white;
+      box-shadow: 0 8px 20px rgba(31, 47, 109, 0.25);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      background-color: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(180, 194, 214, 0.75);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: 0.25s ease;
+    }
+
+    .input-group:focus-within {
+      border-color: #1f2f6d;
+      box-shadow: 0 0 0 3px rgba(31, 47, 109, 0.12);
+    }
+
+    .input-icon {
+      width: 52px;
+      height: 50px;
+      background-color: rgba(226, 232, 240, 0.95);
+      color: #6c7c92;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-group input {
+      flex: 1;
+      height: 50px;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0 14px;
+      font-size: 16px;
+      color: #1f2d3d;
+    }
+
+    .input-group input::placeholder {
+      color: #66788f;
+    }
+
+    .main-btn,
+    .alt-btn {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s ease;
+      margin-bottom: 12px;
+    }
+
+    .main-btn {
+      background-color: #1f2f6d;
+      color: white;
+      box-shadow: 0 10px 22px rgba(31, 47, 109, 0.25);
+    }
+
+    .main-btn:hover {
+      background-color: #182557;
+      transform: translateY(-1px);
+    }
+
+    .alt-btn.red {
+      background-color: #e83c4f;
+      color: white;
+      box-shadow: 0 10px 22px rgba(232, 60, 79, 0.22);
+    }
+
+    .alt-btn.red:hover {
+      background-color: #cf3042;
+      transform: translateY(-1px);
+    }
+
+    .links {
+      margin-top: 14px;
+    }
+
+    .links a {
+      display: inline-block;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: #24446f;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        height: 80px;
+      }
+
+      .logo-box {
+        width: 150px;
+      }
+
+      .logo-box img {
+        height: 50px;
+      }
+
+      .title-area {
+        margin-left: 150px;
+        width: calc(100% - 150px);
+        font-size: 16px;
+        padding-right: 80px;
+      }
+
+      .flags {
+        right: 10px;
+      }
+
+      .flags img {
+        width: 24px;
+        height: 16px;
+      }
+
+      .login-card {
+        padding: 30px 20px 24px;
+      }
+
+      .role-switch {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo-box">
+      <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+    </div>
+
+    <div class="title-area">
+      <span>Medipol Arşiv Sistemi</span> - Kullanıcı Girişi
+    </div>
+
+    <div class="flags">
+      <img src="https://flagcdn.com/w40/tr.png" alt="TR">
+      <img src="https://flagcdn.com/w40/gb.png" alt="EN">
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="login-card">
+      <h1 id="loginTitle">Öğrenci Girişi</h1>
+      <p id="loginDesc">Öğrenci hesabınızla sisteme giriş yapınız</p>
+
+      <div class="role-switch">
+        <button class="role-btn active" id="studentBtn" type="button">Öğrenci Girişi</button>
+        <button class="role-btn" id="teacherBtn" type="button">Öğretmen Girişi</button>
+      </div>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <div class="input-icon">👤</div>
+          <input id="userInput" type="text" placeholder="Öğrenci Numarası" required />
+        </div>
+
+        <div class="input-group">
+          <div class="input-icon">✱</div>
+          <input id="passwordInput" type="password" placeholder="Şifre" required />
+        </div>
+
+        <button class="main-btn" type="submit">GİRİŞ</button>
+        
+      </form>
+
+      <div class="links">
+        <a href="#">Şifre İşlemleri</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const studentBtn = document.getElementById("studentBtn");
+    const teacherBtn = document.getElementById("teacherBtn");
+    const loginTitle = document.getElementById("loginTitle");
+    const loginDesc = document.getElementById("loginDesc");
+    const userInput = document.getElementById("userInput");
+    const loginForm = document.getElementById("loginForm");
+
+    let selectedRole = "student";
+
+    studentBtn.addEventListener("click", function () {
+      selectedRole = "student";
+      studentBtn.classList.add("active");
+      teacherBtn.classList.remove("active");
+
+      loginTitle.textContent = "Öğrenci Girişi";
+      loginDesc.textContent = "Öğrenci hesabınızla sisteme giriş yapınız";
+      userInput.placeholder = "Öğrenci Numarası";
+    });
+
+    teacherBtn.addEventListener("click", function () {
+      selectedRole = "teacher";
+      teacherBtn.classList.add("active");
+      studentBtn.classList.remove("active");
+
+      loginTitle.textContent = "Öğretmen Girişi";
+      loginDesc.textContent = "Öğretmen hesabınızla sisteme giriş yapınız";
+      userInput.placeholder = "Personel Numarası";
+    });
+
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (selectedRole === "teacher") {
+        window.location.href = "dashboard.html?role=teacher";
+      } else {
+        window.location.href = "dashboard.html?role=student";
+      }
+    });
+  </script>
+
+</body>
+</html>

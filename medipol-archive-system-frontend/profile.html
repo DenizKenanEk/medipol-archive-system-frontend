@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medipol Arşiv Sistemi - Profil</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f6fb;
+      color: #1f2d3d;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logo {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-logo img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .system-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .system-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.78);
+      margin-bottom: 26px;
+    }
+
+    .role-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-menu a {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding-top: 18px;
+    }
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid #dde6f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h1 {
+      font-size: 24px;
+      color: #1f2f6d;
+      margin-bottom: 4px;
+    }
+
+    .topbar-left p {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-box {
+      background: #eef3fb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #31425e;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #e83c4f;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #1f2f6d, #30489c);
+      color: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 35px rgba(31, 47, 109, 0.18);
+    }
+
+    .hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .profile-card,
+    .stats-card,
+    .activity-card,
+    .settings-card {
+      background: white;
+      border: 1px solid #e4ebf4;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(23, 35, 79, 0.06);
+    }
+
+    .profile-card {
+      text-align: center;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 700;
+      margin: 0 auto 16px;
+      box-shadow: 0 12px 24px rgba(31, 47, 109, 0.22);
+    }
+
+    .profile-card h3 {
+      color: #1f2f6d;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .profile-card .role-text {
+      color: #6b7a90;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .profile-info {
+      text-align: left;
+      margin-top: 18px;
+      border-top: 1px solid #edf1f7;
+      padding-top: 16px;
+    }
+
+    .profile-info p {
+      font-size: 14px;
+      color: #52657e;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .profile-info strong {
+      color: #1f2f6d;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .stat-box {
+      background: #f8fbff;
+      border: 1px solid #e4ebf4;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .stat-box h4 {
+      color: #1f2f6d;
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .stat-box p {
+      color: #65758c;
+      font-size: 13px;
+    }
+
+    .section-title {
+      color: #1f2f6d;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .activity-item {
+      border-bottom: 1px solid #edf1f7;
+      padding: 14px 0;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-item p {
+      color: #31425e;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 5px;
+    }
+
+    .activity-item span {
+      color: #7a8aa0;
+      font-size: 13px;
+    }
+
+    .settings-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .primary-btn {
+      background: #1f2f6d;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #182557;
+    }
+
+    .secondary-btn {
+      background: #eef3fb;
+      color: #1f2f6d;
+    }
+
+    .secondary-btn:hover {
+      background: #dde7f5;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 520px;
+      background: white;
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-box h3 {
+      color: #1f2f6d;
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
+
+    .modal-group {
+      margin-bottom: 14px;
+    }
+
+    .modal-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1f2f6d;
+      margin-bottom: 7px;
+    }
+
+    .modal-group input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #d4dfec;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .modal-group input[type="password"],
+    .modal-group input.password-visible {
+      padding-right: 44px;
+    }
+
+    .modal-group input:focus {
+      border-color: #1f2f6d;
+      box-shadow: 0 0 0 3px rgba(31, 47, 109, 0.10);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+      opacity: 0.65;
+      transition: 0.2s ease;
+      user-select: none;
+    }
+
+    .toggle-password:hover {
+      opacity: 1;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 1100px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 16px;
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .notification-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+      font-weight: 700;
+      color: #1f2f6d;
+    }
+
+    .notification-option input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #1f2f6d;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+      </div>
+
+      <div class="system-title">Medipol Arşiv Sistemi</div>
+      <div class="system-subtitle">Ankara Medipol Üniversitesi</div>
+
+      <div class="role-badge">
+        Aktif Rol: <strong id="sidebarRole">Öğrenci</strong>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" id="homeMenuLink">Ana Sayfa</a>
+        <a href="#" id="departmentsMenuLink">Bölümler</a>
+        <a href="#" id="notesMenuLink">Notlar</a>
+        <a href="#" id="favoritesMenuLink">Favoriler</a>
+        <a href="#" id="uploadMenuLink">Not Ekle</a>
+        <a href="#" class="active" id="profileMenuLink">Profil</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        © 2026 Medipol Arşiv Sistemi
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Profil</h1>
+          <p>Kullanıcı bilgilerinizi ve sistem içi aktivitelerinizi görüntüleyebilirsiniz.</p>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-box" id="userBox">Rol: Öğrenci</div>
+          <button class="logout-btn" onclick="window.location.href='login.html'">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="hero-card">
+          <h2 id="heroTitle">Kullanıcı Profili</h2>
+          <p id="heroText">
+            Bu sayfada hesap bilgileriniz, yüklediğiniz notlar, favorileriniz ve son aktiviteleriniz görüntülenir.
+          </p>
+        </section>
+
+        <div class="profile-grid">
+          <section class="profile-card">
+            <div class="avatar" id="avatarText">Ö</div>
+            <h3 id="profileName">Öğrenci Kullanıcı</h3>
+            <p class="role-text" id="profileRole">Öğrenci Hesabı</p>
+
+            <div class="profile-info">
+              <p><strong>Bölüm:</strong> <span id="profileDepartment">Bilgisayar Mühendisliği</span></p>
+              <p><strong>E-posta:</strong> <span id="profileEmail">student@ankaramedipol.edu.tr</span></p>
+              <p><strong>Kullanıcı No:</strong> <span id="profileNumber">2026000001</span></p>
+              <p><strong>Durum:</strong> Aktif</p>
+            </div>
+          </section>
+
+          <div class="right-column">
+            <section class="stats-card">
+              <h3 class="section-title">Profil İstatistikleri</h3>
+
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <h4 id="uploadedCount">8</h4>
+                  <p>Yüklenen Not</p>
+                </div>
+
+                <div class="stat-box">
+                  <h4 id="favoriteCount">3</h4>
+                  <p>Favori Not</p>
+                </div>
+
+                <div class="stat-box">
+                  <h4 id="commentCount">12</h4>
+                  <p>Yorum</p>
+                </div>
+
+                <div class="stat-box">
+                  <h4 id="likeCount">27</h4>
+                  <p>Beğeni</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="activity-card">
+              <h3 class="section-title">Son Aktiviteler</h3>
+
+              <div id="activityList">
+                <div class="activity-item">
+                  <p><strong>Operating Systems Midterm Notes</strong> favorilere eklendi.</p>
+                  <span>Bugün</span>
+                </div>
+
+                <div class="activity-item">
+                  <p><strong>Programming I - Hafta 1 Notları</strong> için yorum yapıldı.</p>
+                  <span>2 gün önce</span>
+                </div>
+
+                <div class="activity-item">
+                  <p><strong>Data Structures Özet</strong> notu beğenildi.</p>
+                  <span>4 gün önce</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-card">
+              <h3 class="section-title">Hesap İşlemleri</h3>
+
+              <div class="settings-row">
+                <button class="primary-btn" type="button" id="editProfileBtn">Profili Düzenle</button>
+                <button class="secondary-btn" type="button" id="changePasswordBtn">Şifre Değiştir</button>
+                <button class="secondary-btn" type="button" id="notificationSettingsBtn">Bildirim Ayarları</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="editProfileModal">
+    <div class="modal-box">
+      <h3>Profili Düzenle</h3>
+
+      <div class="modal-group">
+        <label for="editName">Ad Soyad</label>
+        <input type="text" id="editName">
+      </div>
+
+      <div class="modal-group">
+        <label for="editEmail">E-posta</label>
+        <input type="email" id="editEmail">
+      </div>
+
+      <div class="modal-group">
+        <label for="editDepartment">Bölüm</label>
+        <input type="text" id="editDepartment">
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" id="closeModalBtn">İptal</button>
+        <button class="primary-btn" type="button" id="saveProfileBtn">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal-box">
+      <h3>Şifre Değiştir</h3>
+
+      <div class="modal-group">
+        <label for="currentPassword">Mevcut Şifre</label>
+        <div class="password-wrapper">
+          <input type="password" id="currentPassword" placeholder="Mevcut şifrenizi girin">
+          <span class="toggle-password" onclick="togglePassword('currentPassword', this)">👁</span>
+        </div>
+      </div>
+
+      <div class="modal-group">
+        <label for="newPassword">Yeni Şifre</label>
+        <div class="password-wrapper">
+          <input type="password" id="newPassword" placeholder="Yeni şifre">
+          <span class="toggle-password" onclick="togglePassword('newPassword', this)">👁</span>
+        </div>
+      </div>
+
+      <div class="modal-group">
+        <label for="confirmPassword">Yeni Şifre Tekrar</label>
+        <div class="password-wrapper">
+          <input type="password" id="confirmPassword" placeholder="Yeni şifre tekrar">
+          <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" id="closePasswordModalBtn">İptal</button>
+        <button class="primary-btn" type="button" id="savePasswordBtn">Şifreyi Güncelle</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="notificationModal">
+    <div class="modal-box">
+      <h3>Bildirim Ayarları</h3>
+
+      <div id="notificationOptions"></div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" id="closeNotificationModalBtn">İptal</button>
+        <button class="primary-btn" type="button" id="saveNotificationBtn">Ayarları Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role") || "student";
+
+    const sidebarRole = document.getElementById("sidebarRole");
+    const userBox = document.getElementById("userBox");
+
+    const homeMenuLink = document.getElementById("homeMenuLink");
+    const departmentsMenuLink = document.getElementById("departmentsMenuLink");
+    const notesMenuLink = document.getElementById("notesMenuLink");
+    const favoritesMenuLink = document.getElementById("favoritesMenuLink");
+    const uploadMenuLink = document.getElementById("uploadMenuLink");
+    const profileMenuLink = document.getElementById("profileMenuLink");
+
+    homeMenuLink.href = "dashboard.html?role=" + role;
+    departmentsMenuLink.href = "dashboard.html?role=" + role + "#departmentGrid";
+    notesMenuLink.href = "notes.html?role=" + role;
+    favoritesMenuLink.href = "favorites.html?role=" + role;
+    uploadMenuLink.href = "upload-note.html?role=" + role;
+    profileMenuLink.href = "profile.html?role=" + role;
+
+    const avatarText = document.getElementById("avatarText");
+    const profileName = document.getElementById("profileName");
+    const profileRole = document.getElementById("profileRole");
+    const profileDepartment = document.getElementById("profileDepartment");
+    const profileEmail = document.getElementById("profileEmail");
+    const profileNumber = document.getElementById("profileNumber");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroText = document.getElementById("heroText");
+
+    const uploadedCount = document.getElementById("uploadedCount");
+    const favoriteCount = document.getElementById("favoriteCount");
+    const commentCount = document.getElementById("commentCount");
+    const likeCount = document.getElementById("likeCount");
+    const activityList = document.getElementById("activityList");
+
+    if (role === "teacher") {
+      sidebarRole.textContent = "Öğretmen";
+      userBox.textContent = "Rol: Öğretmen";
+
+      avatarText.textContent = "H";
+      profileName.textContent = "Öğretmen Kullanıcı";
+      profileRole.textContent = "Öğretmen Hesabı";
+      profileDepartment.textContent = "Mühendislik Fakültesi";
+      profileEmail.textContent = "teacher@ankaramedipol.edu.tr";
+      profileNumber.textContent = "TCH-2026";
+
+      heroTitle.textContent = "Öğretmen Profili";
+      heroText.textContent = "Bu sayfada öğretmen hesabınıza ait bilgiler, yüklediğiniz materyaller ve sistem aktiviteleri görüntülenir.";
+
+      uploadedCount.textContent = "14";
+      favoriteCount.textContent = "5";
+      commentCount.textContent = "21";
+      likeCount.textContent = "64";
+
+      activityList.innerHTML = `
+        <div class="activity-item">
+          <p><strong>Data Structures Özet</strong> sisteme yüklendi.</p>
+          <span>Bugün</span>
+        </div>
+
+        <div class="activity-item">
+          <p><strong>Circuit Analysis Formula Sheet</strong> güncellendi.</p>
+          <span>1 gün önce</span>
+        </div>
+
+        <div class="activity-item">
+          <p><strong>Operating Systems Midterm Notes</strong> yorumlandı.</p>
+          <span>3 gün önce</span>
+        </div>
+      `;
+    } else {
+      sidebarRole.textContent = "Öğrenci";
+      userBox.textContent = "Rol: Öğrenci";
+
+      avatarText.textContent = "Ö";
+      profileName.textContent = "Öğrenci Kullanıcı";
+      profileRole.textContent = "Öğrenci Hesabı";
+      profileDepartment.textContent = "Bilgisayar Mühendisliği";
+      profileEmail.textContent = "student@ankaramedipol.edu.tr";
+      profileNumber.textContent = "2026000001";
+
+      heroTitle.textContent = "Öğrenci Profili";
+      heroText.textContent = "Bu sayfada öğrenci hesabınıza ait bilgiler, favorileriniz ve son aktiviteleriniz görüntülenir.";
+    }
+
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const editProfileModal = document.getElementById("editProfileModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+    const editName = document.getElementById("editName");
+    const editEmail = document.getElementById("editEmail");
+    const editDepartment = document.getElementById("editDepartment");
+
+    editProfileBtn.addEventListener("click", function () {
+      editName.value = profileName.textContent;
+      editEmail.value = profileEmail.textContent;
+      editDepartment.value = profileDepartment.textContent;
+
+      editProfileModal.style.display = "flex";
+    });
+
+    closeModalBtn.addEventListener("click", function () {
+      editProfileModal.style.display = "none";
+    });
+
+    editProfileModal.addEventListener("click", function (e) {
+      if (e.target === editProfileModal) {
+        editProfileModal.style.display = "none";
+      }
+    });
+
+    saveProfileBtn.addEventListener("click", function () {
+      profileName.textContent = editName.value;
+      profileEmail.textContent = editEmail.value;
+      profileDepartment.textContent = editDepartment.value;
+
+      editProfileModal.style.display = "none";
+    });
+
+    const changePasswordBtn = document.getElementById("changePasswordBtn");
+    const passwordModal = document.getElementById("passwordModal");
+    const closePasswordModalBtn = document.getElementById("closePasswordModalBtn");
+    const savePasswordBtn = document.getElementById("savePasswordBtn");
+
+    const currentPassword = document.getElementById("currentPassword");
+    const newPassword = document.getElementById("newPassword");
+    const confirmPassword = document.getElementById("confirmPassword");
+
+    changePasswordBtn.addEventListener("click", function () {
+      currentPassword.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      currentPassword.type = "password";
+      newPassword.type = "password";
+      confirmPassword.type = "password";
+
+      document.querySelectorAll(".toggle-password").forEach(icon => {
+        icon.textContent = "👁";
+      });
+
+      passwordModal.style.display = "flex";
+    });
+
+    closePasswordModalBtn.addEventListener("click", function () {
+      passwordModal.style.display = "none";
+    });
+
+    passwordModal.addEventListener("click", function (e) {
+      if (e.target === passwordModal) {
+        passwordModal.style.display = "none";
+      }
+    });
+
+    savePasswordBtn.addEventListener("click", function () {
+      if (
+        currentPassword.value.trim() === "" ||
+        newPassword.value.trim() === "" ||
+        confirmPassword.value.trim() === ""
+      ) {
+        alert("Lütfen tüm alanları doldurun.");
+        return;
+      }
+
+      if (newPassword.value.length < 6) {
+        alert("Yeni şifre en az 6 karakter olmalıdır.");
+        return;
+      }
+
+      if (newPassword.value !== confirmPassword.value) {
+        alert("Yeni şifreler eşleşmiyor.");
+        return;
+      }
+
+      alert("Şifre güncelleme isteği gönderildi. Backend bağlanınca gerçek işlem yapılacak.");
+      passwordModal.style.display = "none";
+    });
+
+    function togglePassword(inputId, iconElement) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        input.classList.add("password-visible");
+        iconElement.textContent = "🙈";
+      } else {
+        input.type = "password";
+        input.classList.remove("password-visible");
+        iconElement.textContent = "👁";
+      }
+    }
+
+    const notificationSettingsBtn = document.getElementById("notificationSettingsBtn");
+    const notificationModal = document.getElementById("notificationModal");
+    const closeNotificationModalBtn = document.getElementById("closeNotificationModalBtn");
+    const saveNotificationBtn = document.getElementById("saveNotificationBtn");
+    const notificationOptions = document.getElementById("notificationOptions");
+
+    const studentNotifications = [
+      { id: "emailNotifications", text: "E-posta bildirimleri", checked: true },
+      { id: "newNoteNotifications", text: "Yeni not eklendiğinde bildir", checked: true },
+      { id: "commentNotifications", text: "Yoruma cevap gelince bildir", checked: true },
+      { id: "favoriteNotifications", text: "Favori not güncellenince bildir", checked: false }
+    ];
+
+    const teacherNotifications = [
+      { id: "emailNotifications", text: "E-posta bildirimleri", checked: true },
+      { id: "studentUploadNotifications", text: "Öğrenci not yüklediğinde bildir", checked: true },
+      { id: "materialCommentNotifications", text: "Ders materyaline yorum gelince bildir", checked: true },
+      { id: "systemAnnouncementNotifications", text: "Sistem duyurularını bildir", checked: true }
+    ];
+
+    function renderNotificationOptions() {
+      const options = role === "teacher" ? teacherNotifications : studentNotifications;
+      notificationOptions.innerHTML = "";
+
+      options.forEach(option => {
+        notificationOptions.innerHTML += `
+          <label class="notification-option">
+            <span>${option.text}</span>
+            <input type="checkbox" id="${option.id}" ${option.checked ? "checked" : ""}>
+          </label>
+        `;
+      });
+    }
+
+    notificationSettingsBtn.addEventListener("click", function () {
+      renderNotificationOptions();
+      notificationModal.style.display = "flex";
+    });
+
+    closeNotificationModalBtn.addEventListener("click", function () {
+      notificationModal.style.display = "none";
+    });
+
+    notificationModal.addEventListener("click", function (e) {
+      if (e.target === notificationModal) {
+        notificationModal.style.display = "none";
+      }
+    });
+
+    saveNotificationBtn.addEventListener("click", function () {
+      const selectedOptions = {};
+      const checkboxes = notificationOptions.querySelectorAll("input[type='checkbox']");
+
+      checkboxes.forEach(checkbox => {
+        selectedOptions[checkbox.id] = checkbox.checked;
+      });
+
+      console.log("Kaydedilecek bildirim ayarları:", selectedOptions);
+      alert("Bildirim ayarları kaydedildi. Backend bağlanınca kullanıcı hesabına kaydedilecek.");
+      notificationModal.style.display = "none";
+    });
+
+
+  </script>
+</body>
+</html>

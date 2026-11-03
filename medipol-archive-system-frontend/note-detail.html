@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medipol Arşiv Sistemi - Not Detayı</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f6fb;
+      color: #1f2d3d;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logo {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-logo img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .system-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .system-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 26px;
+    }
+
+    .role-badge {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-menu a {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255,255,255,0.14);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding-top: 18px;
+    }
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid #dde6f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h1 {
+      font-size: 24px;
+      color: #1f2f6d;
+      margin-bottom: 4px;
+    }
+
+    .topbar-left p {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .user-box {
+      background: #eef3fb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #31425e;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #e83c4f;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-left: 10px;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #1f2f6d, #30489c);
+      color: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 35px rgba(31,47,109,0.18);
+    }
+
+    .hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .preview-card,
+    .comments-card {
+      background: white;
+      border: 1px solid #e4ebf4;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 24px rgba(23,35,79,0.06);
+    }
+
+    .pdf-preview {
+      height: 360px;
+      border: 2px dashed #c7d4e5;
+      border-radius: 16px;
+      background: #f8fbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #63738a;
+      margin-bottom: 18px;
+      padding: 20px;
+    }
+
+    .pdf-preview h3 {
+      color: #1f2f6d;
+      margin-bottom: 8px;
+    }
+
+    .note-info {
+      margin-bottom: 16px;
+      color: #65758c;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      background: #1f2f6d;
+      color: white;
+    }
+
+    .secondary-btn {
+      background: #eef3fb;
+      color: #1f2f6d;
+    }
+
+    .interaction-row {
+      display: flex;
+      gap: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #edf1f7;
+      color: #5c6b80;
+      font-size: 15px;
+    }
+
+    .interaction-row span {
+      cursor: pointer;
+      user-select: none;
+      transition: 0.2s ease;
+    }
+
+    .interaction-row span:hover {
+      color: #1f2f6d;
+      transform: scale(1.06);
+    }
+
+    .comments-card h3 {
+      color: #1f2f6d;
+      margin-bottom: 16px;
+    }
+
+    .comment {
+      border-bottom: 1px solid #edf1f7;
+      padding: 14px 0;
+    }
+
+    .comment p {
+      color: #31425e;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .comment span {
+      font-size: 13px;
+      color: #7a8aa0;
+    }
+
+    .comment-form {
+      margin-top: 18px;
+    }
+
+    .comment-form textarea {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid #d4dfec;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .comment-form textarea:focus {
+      border-color: #1f2f6d;
+      box-shadow: 0 0 0 3px rgba(31,47,109,0.10);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #1f2f6d;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1000px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar {
+        height: auto;
+        padding: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+      }
+
+      .content {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+      </div>
+
+      <div class="system-title">Medipol Arşiv Sistemi</div>
+      <div class="system-subtitle">Ankara Medipol Üniversitesi</div>
+
+      <div class="role-badge">
+        Aktif Rol: <strong id="sidebarRole">Öğrenci</strong>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" id="homeMenuLink">Ana Sayfa</a>
+        <a href="#" id="departmentsMenuLink">Bölümler</a>
+        <a href="#" class="active" id="notesMenuLink">Notlar</a>
+        <a href="#" id="uploadMenuLink">Not Ekle</a>
+        <a href="#" id="favoritesMenuLink">Favoriler</a>
+        <a href="#" id="profileMenuLink">Profil</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        © 2026 Medipol Arşiv Sistemi
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Not Detayı</h1>
+          <p>Seçilen ders notunu görüntüleyebilir, beğenebilir ve yorum yapabilirsiniz.</p>
+        </div>
+
+        <div>
+          <span class="user-box" id="userBox">Rol: Öğrenci</span>
+          <button class="logout-btn" onclick="window.location.href='login.html'">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="hero-card">
+          <h2 id="noteTitle">Programming I - Hafta 1 Notları</h2>
+          <p id="noteSubtitle">Bilgisayar Mühendisliği • Programming I • Yükleyen: Öğrenci</p>
+        </section>
+
+        <div class="detail-grid">
+          <section class="preview-card">
+            <div class="pdf-preview">
+              <div>
+                <h3>PDF Önizleme Alanı</h3>
+                <p>Backend/file sistemi bağlandığında yüklenen PDF burada görüntülenecek.</p>
+              </div>
+            </div>
+
+            <div class="note-info">
+              <p><strong>Bölüm:</strong> Bilgisayar Mühendisliği</p>
+              <p><strong>Ders:</strong> Programming I</p>
+              <p><strong>Açıklama:</strong> Değişkenler, veri tipleri ve temel programlama mantığı.</p>
+              <p><strong>Tarih:</strong> 12.03.2026</p>
+            </div>
+
+            <div class="action-row">
+              <button class="primary-btn" type="button">PDF Görüntüle</button>
+              <button class="secondary-btn" type="button">PDF İndir</button>
+            </div>
+
+            <div class="interaction-row">
+              <span id="likeBtn">🤍 <strong id="likeCount">12</strong> Beğeni</span>
+              <span>💬 <strong id="commentCount">3</strong> Yorum</span>
+              <span id="saveBtn">📑 Kaydet</span>
+            </div>
+
+            <a class="back-link" id="backToNotes" href="#">← Notlar sayfasına dön</a>
+          </section>
+
+          <section class="comments-card">
+            <h3>Yorumlar</h3>
+
+            <div id="commentsList">
+              <div class="comment">
+                <p>Geçen senenin en faydalı notlarından biriydi, kesinlikle işe yarıyor.</p>
+                <span>Öğrenci • 5 beğeni</span>
+              </div>
+
+              <div class="comment">
+                <p>Devamı olan paylaşabilir mi? Bende not ekleme kısmından birkaç dosya ekleyeceğim.</p>
+                <span>Öğrenci • 2 beğeni</span>
+              </div>
+
+              <div class="comment">
+                <p>Hocanın sınavda sorduğu konulara yakın, çalışırken yardımcı olur.</p>
+                <span>Öğrenci • 1 beğeni</span>
+              </div>
+            </div>
+
+            <div class="comment-form">
+              <textarea id="commentInput" placeholder="Yorum yaz..."></textarea>
+              <button class="primary-btn" id="addCommentBtn" type="button">Yorum Ekle</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role") || "student";
+    const noteId = Number(params.get("id")) || 1;
+
+    const notes = [
+  {
+    id: 1,
+    title: "Programming I - Hafta 1 Notları",
+    department: "Bilgisayar Mühendisliği",
+    course: "Programming I",
+    uploader: "Öğrenci",
+    date: "12.03.2026",
+    description: "Değişkenler, veri tipleri ve temel programlama mantığı.",
+    likes: 12,
+    comments: 3,
+    saved: false
+  },
+  {
+    id: 2,
+    title: "Data Structures Özet",
+    department: "Bilgisayar Mühendisliği",
+    course: "Data Structures",
+    uploader: "Öğretmen",
+    date: "18.03.2026",
+    description: "Array, linked list, stack ve queue konularının kısa özeti.",
+    likes: 24,
+    comments: 6,
+    saved: true
+  },
+  {
+    id: 3,
+    title: "Operating Systems Midterm Notes",
+    department: "Bilgisayar Mühendisliği",
+    course: "Operating Systems",
+    uploader: "Öğrenci",
+    date: "22.03.2026",
+    description: "Process, thread, scheduling ve synchronization konuları.",
+    likes: 18,
+    comments: 4,
+    saved: false
+  },
+  {
+    id: 4,
+    title: "Circuit Analysis Formula Sheet",
+    department: "Elektrik-Elektronik Mühendisliği",
+    course: "Circuit Analysis",
+    uploader: "Öğretmen",
+    date: "15.03.2026",
+    description: "Ohm kanunu, Kirchhoff kuralları ve devre analiz formülleri.",
+    likes: 15,
+    comments: 2,
+    saved: false
+  },
+  {
+        id: 5,
+        title: "Signals and Systems Ders Özeti",
+        department: "Elektrik-Elektronik Mühendisliği",
+        course: "Signals and Systems",
+        uploader: "Öğrenci",
+        date: "25.03.2026",
+        description: "Sinyal türleri, sistem özellikleri ve temel dönüşümler.",
+        likes: 9,
+        comments: 1,
+        saved: false
+      },
+      {
+        id: 6,
+        title: "Microprocessors Lab Notes",
+        department: "Elektrik-Elektronik Mühendisliği",
+        course: "Microprocessors",
+        uploader: "Öğrenci",
+        date: "28.03.2026",
+        description: "Mikroişlemci laboratuvarı için örnek komutlar ve açıklamalar.",
+        likes: 21,
+        comments: 5,
+        saved: true
+      }
+];
+
+const selectedNote = notes.find(note => note.id === noteId) || notes[0];
+
+    const sidebarRole = document.getElementById("sidebarRole");
+    const userBox = document.getElementById("userBox");
+
+    const homeMenuLink = document.getElementById("homeMenuLink");
+    const departmentsMenuLink = document.getElementById("departmentsMenuLink");
+    const notesMenuLink = document.getElementById("notesMenuLink");
+    const uploadMenuLink = document.getElementById("uploadMenuLink");
+    const backToNotes = document.getElementById("backToNotes");
+    const favoritesMenuLink = document.getElementById("favoritesMenuLink");
+    const profileMenuLink = document.getElementById("profileMenuLink");
+
+
+    homeMenuLink.href = "dashboard.html?role=" + role;
+    departmentsMenuLink.href = "dashboard.html?role=" + role + "#departmentGrid";
+    notesMenuLink.href = "notes.html?role=" + role;
+    uploadMenuLink.href = "upload-note.html?role=" + role;
+    backToNotes.href = "notes.html?role=" + role;
+    favoritesMenuLink.href = "favorites.html?role=" + role;
+    profileMenuLink.href = "profile.html?role=" + role;
+
+    if (role === "teacher") {
+      sidebarRole.textContent = "Öğretmen";
+      userBox.textContent = "Rol: Öğretmen";
+    } else {
+      sidebarRole.textContent = "Öğrenci";
+      userBox.textContent = "Rol: Öğrenci";
+    }
+
+    let liked = false;
+    let saved = false;
+    let likeCount = 12;
+    let commentCount = 3;
+
+    const likeBtn = document.getElementById("likeBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const likeCountEl = document.getElementById("likeCount");
+    const commentCountEl = document.getElementById("commentCount");
+
+    likeBtn.addEventListener("click", function () {
+      liked = !liked;
+      likeCount = liked ? likeCount + 1 : likeCount - 1;
+      likeCountEl.textContent = likeCount;
+      likeBtn.innerHTML = (liked ? "❤️ " : "🤍 ") + "<strong id='likeCount'>" + likeCount + "</strong> Beğeni";
+    });
+
+    saveBtn.addEventListener("click", function () {
+      saved = !saved;
+      saveBtn.textContent = saved ? "🔖 Kaydedildi" : "📑 Kaydet";
+    });
+
+    const commentInput = document.getElementById("commentInput");
+    const addCommentBtn = document.getElementById("addCommentBtn");
+    const commentsList = document.getElementById("commentsList");
+
+    addCommentBtn.addEventListener("click", function () {
+      const text = commentInput.value.trim();
+
+      if (text === "") {
+        alert("Lütfen yorum yazın.");
+        return;
+      }
+
+      const comment = document.createElement("div");
+      comment.className = "comment";
+      comment.innerHTML = `
+        <p>${text}</p>
+        <span>Sen • 0 beğeni</span>
+      `;
+
+      commentsList.appendChild(comment);
+      commentInput.value = "";
+
+      commentCount++;
+      commentCountEl.textContent = commentCount;
+    });
+
+    document.getElementById("noteTitle").textContent = selectedNote.title;
+
+    document.getElementById("noteSubtitle").textContent =
+      selectedNote.department + " • " + selectedNote.course + " • Yükleyen: " + selectedNote.uploader;
+
+    document.querySelector(".note-info").innerHTML = `
+      <p><strong>Bölüm:</strong> ${selectedNote.department}</p>
+      <p><strong>Ders:</strong> ${selectedNote.course}</p>
+      <p><strong>Açıklama:</strong> ${selectedNote.description}</p>
+      <p><strong>Tarih:</strong> ${selectedNote.date}</p>
+    `;
+  </script>
+</body>
+</html>

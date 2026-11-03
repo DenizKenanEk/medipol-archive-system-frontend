@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medipol Arşiv Sistemi - Notlar</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f6fb;
+      color: #1f2d3d;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logo {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-logo img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .system-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .system-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.78);
+      margin-bottom: 26px;
+    }
+
+    .role-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-menu a {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding-top: 18px;
+    }
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid #dde6f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h1 {
+      font-size: 24px;
+      color: #1f2f6d;
+      margin-bottom: 4px;
+    }
+
+    .topbar-left p {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-box {
+      background: #eef3fb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #31425e;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #e83c4f;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #1f2f6d, #30489c);
+      color: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 35px rgba(31, 47, 109, 0.18);
+    }
+
+    .hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 850px;
+    }
+
+    .filter-card {
+      background: white;
+      border: 1px solid #e3ebf5;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px rgba(23, 35, 79, 0.06);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .filter-grid input,
+    .filter-grid select {
+      height: 48px;
+      border: 1px solid #d4dfec;
+      border-radius: 10px;
+      padding: 0 14px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+    }
+
+    .filter-grid input:focus,
+    .filter-grid select:focus {
+      border-color: #1f2f6d;
+      box-shadow: 0 0 0 3px rgba(31, 47, 109, 0.10);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .section-title h3 {
+      font-size: 22px;
+      color: #1f2f6d;
+    }
+
+    .section-title span {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .note-card {
+      background: white;
+      border: 1px solid #e4ebf4;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 24px rgba(23, 35, 79, 0.06);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .note-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 18px 30px rgba(23, 35, 79, 0.12);
+      border-color: #cfdaf0;
+    }
+
+    .note-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #1f2f6d, #4a67d6);
+    }
+
+    .note-card:hover::before {
+      background: linear-gradient(90deg, #4a67d6, #1f2f6d);
+    }
+
+    .note-card h4 {
+      color: #1f2f6d;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .note-card p {
+      color: #65758c;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .note-meta {
+      font-size: 13px;
+      color: #7a8aa0;
+      margin-bottom: 14px;
+    }
+
+    .note-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .view-btn,
+    .download-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .view-btn {
+      background: #1f2f6d;
+      color: white;
+    }
+
+    .download-btn {
+      background: #eef3fb;
+      color: #1f2f6d;
+    }
+
+    .note-interactions {
+      display: flex;
+      gap: 18px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #edf1f7;
+      font-size: 14px;
+      color: #5c6b80;
+      align-items: center;
+    }
+
+    .note-interactions span {
+      cursor: pointer;
+      transition: 0.2s ease;
+      user-select: none;
+    }
+
+    .note-interactions span:hover {
+      color: #1f2f6d;
+      transform: scale(1.08);
+    }
+
+    .like-btn,
+    .save-btn {
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .save-btn:hover {
+      color: #1f2f6d;
+      transform: scale(1.08);
+    }
+
+    .empty-message {
+      display: none;
+      background: #fff4e5;
+      border: 1px solid #ffd59a;
+      color: #8a5a00;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 16px;
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .content {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+      </div>
+
+      <div class="system-title">Medipol Arşiv Sistemi</div>
+      <div class="system-subtitle">Ankara Medipol Üniversitesi</div>
+
+      <div class="role-badge">
+        Aktif Rol: <strong id="sidebarRole">Öğrenci</strong>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" id="homeMenuLink">Ana Sayfa</a>
+        <a href="#" id="departmentsMenuLink">Bölümler</a>
+        <a href="#" class="active" id="notesMenuLink">Notlar</a>
+        <a href="#" id="uploadMenuLink">Not Ekle</a>
+        <a href="#" id="favoritesMenuLink">Favoriler</a>
+        <a href="#" id="profileMenuLink">Profil</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        © 2026 Medipol Arşiv Sistemi
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Yüklenen Notlar</h1>
+          <p>Sisteme eklenen ders notlarını ve arşiv içeriklerini görüntüleyebilirsiniz.</p>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-box" id="userBox">Rol: Öğrenci</div>
+          <button class="logout-btn" onclick="window.location.href='login.html'">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="hero-card">
+          <h2>Notlar ve Ders Materyalleri</h2>
+          <p>
+            Bu sayfada mühendislik fakültesine ait örnek ders notları listelenmektedir.
+            Arama yapabilir, bölüme veya derse göre filtreleyebilirsiniz.
+          </p>
+        </section>
+
+        <section class="filter-card">
+          <div class="filter-grid">
+            <input type="text" id="searchInput" placeholder="Not başlığı, ders veya açıklama ara...">
+
+            <select id="departmentFilter">
+              <option value="all">Tüm Bölümler</option>
+              <option value="Bilgisayar Mühendisliği">Bilgisayar Mühendisliği</option>
+              <option value="Elektrik-Elektronik Mühendisliği">Elektrik-Elektronik Mühendisliği</option>
+            </select>
+
+            <select id="courseFilter">
+              <option value="all">Tüm Dersler</option>
+            </select>
+          </div>
+        </section>
+
+        <div class="section-title">
+          <h3>Not Listesi</h3>
+          <span id="noteCount">0 not gösteriliyor</span>
+        </div>
+
+        <div class="notes-grid" id="notesGrid"></div>
+
+        <div class="empty-message" id="emptyMessage">
+          Seçtiğiniz filtrelere uygun not bulunamadı.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role") || "student";
+
+    const sidebarRole = document.getElementById("sidebarRole");
+    const userBox = document.getElementById("userBox");
+    const homeMenuLink = document.getElementById("homeMenuLink");
+    const departmentsMenuLink = document.getElementById("departmentsMenuLink");
+    const uploadMenuLink = document.getElementById("uploadMenuLink");
+    const favoritesMenuLink = document.getElementById("favoritesMenuLink");
+    const profileMenuLink = document.getElementById("profileMenuLink");
+
+    homeMenuLink.href = "dashboard.html?role=" + role;
+    departmentsMenuLink.href = "dashboard.html?role=" + role + "#departmentGrid";
+    uploadMenuLink.href = "upload-note.html?role=" + role;
+    favoritesMenuLink.href = "favorites.html?role=" + role;
+    profileMenuLink.href = "profile.html?role=" + role;
+
+    if (role === "teacher") {
+      sidebarRole.textContent = "Öğretmen";
+      userBox.textContent = "Rol: Öğretmen";
+    } else {
+      sidebarRole.textContent = "Öğrenci";
+      userBox.textContent = "Rol: Öğrenci";
+    }
+
+    const notes = [
+      {
+        id: 1,
+        title: "Programming I - Hafta 1 Notları",
+        department: "Bilgisayar Mühendisliği",
+        course: "Programming I",
+        uploader: "Öğrenci",
+        date: "12.03.2026",
+        description: "Değişkenler, veri tipleri ve temel programlama mantığı.",
+        likes: 12,
+        comments: 3,
+        saved: false
+      },
+      {
+        id: 2,
+        title: "Data Structures Özet",
+        department: "Bilgisayar Mühendisliği",
+        course: "Data Structures",
+        uploader: "Öğretmen",
+        date: "18.03.2026",
+        description: "Array, linked list, stack ve queue konularının kısa özeti.",
+        likes: 24,
+        comments: 6,
+        saved: true
+      },
+      {
+        id: 3,
+        title: "Operating Systems Midterm Notes",
+        department: "Bilgisayar Mühendisliği",
+        course: "Operating Systems",
+        uploader: "Öğrenci",
+        date: "22.03.2026",
+        description: "Process, thread, scheduling ve synchronization konuları.",
+        likes: 18,
+        comments: 4,
+        saved: false
+      },
+      {
+        id: 4,
+        title: "Circuit Analysis Formula Sheet",
+        department: "Elektrik-Elektronik Mühendisliği",
+        course: "Circuit Analysis",
+        uploader: "Öğretmen",
+        date: "15.03.2026",
+        description: "Ohm kanunu, Kirchhoff kuralları ve devre analiz formülleri.",
+        likes: 15,
+        comments: 2,
+        saved: false
+      },
+      {
+        id: 5,
+        title: "Signals and Systems Ders Özeti",
+        department: "Elektrik-Elektronik Mühendisliği",
+        course: "Signals and Systems",
+        uploader: "Öğrenci",
+        date: "25.03.2026",
+        description: "Sinyal türleri, sistem özellikleri ve temel dönüşümler.",
+        likes: 9,
+        comments: 1,
+        saved: false
+      },
+      {
+        id: 6,
+        title: "Microprocessors Lab Notes",
+        department: "Elektrik-Elektronik Mühendisliği",
+        course: "Microprocessors",
+        uploader: "Öğrenci",
+        date: "28.03.2026",
+        description: "Mikroişlemci laboratuvarı için örnek komutlar ve açıklamalar.",
+        likes: 21,
+        comments: 5,
+        saved: true
+      }
+    ];
+
+    const departmentCourses = {
+      "Bilgisayar Mühendisliği": [
+        "Programming I",
+        "Data Structures",
+        "Algorithms",
+        "Database Systems",
+        "Operating Systems",
+        "Computer Networks"
+      ],
+      "Elektrik-Elektronik Mühendisliği": [
+        "Circuit Analysis",
+        "Electronics",
+        "Signals and Systems",
+        "Microprocessors",
+        "Control Systems",
+        "Electromagnetics"
+      ]
+    };
+
+    const notesGrid = document.getElementById("notesGrid");
+    const searchInput = document.getElementById("searchInput");
+    const departmentFilter = document.getElementById("departmentFilter");
+    const courseFilter = document.getElementById("courseFilter");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const noteCount = document.getElementById("noteCount");
+
+    function updateCourseFilter() {
+      const selectedDepartment = departmentFilter.value;
+      courseFilter.innerHTML = '<option value="all">Tüm Dersler</option>';
+
+      if (selectedDepartment !== "all") {
+        departmentCourses[selectedDepartment].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.textContent = course;
+          courseFilter.appendChild(option);
+        });
+      }
+    }
+
+    function renderNotes() {
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedDepartment = departmentFilter.value;
+      const selectedCourse = courseFilter.value;
+
+      const filteredNotes = notes.filter(note => {
+        const matchesSearch =
+          note.title.toLowerCase().includes(searchValue) ||
+          note.course.toLowerCase().includes(searchValue) ||
+          note.description.toLowerCase().includes(searchValue);
+
+        const matchesDepartment =
+          selectedDepartment === "all" || note.department === selectedDepartment;
+
+        const matchesCourse =
+          selectedCourse === "all" || note.course === selectedCourse;
+
+        return matchesSearch && matchesDepartment && matchesCourse;
+      });
+
+      notesGrid.innerHTML = "";
+
+      filteredNotes.forEach(note => {
+        const card = document.createElement("div");
+        card.className = "note-card";
+
+        card.addEventListener("click", function () {
+          window.location.href = "note-detail.html?id=" + note.id + "&role=" + role;
+        });
+
+        card.innerHTML = `
+          <h4>${note.title}</h4>
+
+          <p><strong>Bölüm:</strong> ${note.department}</p>
+          <p><strong>Ders:</strong> ${note.course}</p>
+          <p><strong>Açıklama:</strong> ${note.description}</p>
+
+          <div class="note-meta">
+            Yükleyen: ${note.uploader} | Tarih: ${note.date}
+          </div>
+
+          <div class="note-actions">
+            <button class="view-btn" type="button" onclick="event.stopPropagation(); window.location.href='note-detail.html?id=${note.id}&role=${role}'">Görüntüle</button>
+            <button class="download-btn" type="button" onclick="event.stopPropagation();">İndir</button>
+          </div>
+
+          <div class="note-interactions">
+            <span class="like-btn" data-liked="false" data-count="${note.likes}">
+              🤍 <span class="like-count">${note.likes}</span>
+            </span>
+
+            <span class="comment-btn" title="Yorum">
+              💬 ${note.comments}
+            </span>
+
+            <span class="save-btn" data-saved="${note.saved}">
+              ${note.saved ? "🔖 Kaydedildi" : "📑 Kaydet"}
+            </span>
+          </div>
+        `;
+
+        notesGrid.appendChild(card);
+
+        const likeBtn = card.querySelector(".like-btn");
+        const saveBtn = card.querySelector(".save-btn");
+        const commentBtn = card.querySelector(".comment-btn");
+
+        likeBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+
+          let liked = this.getAttribute("data-liked") === "true";
+          let count = Number(this.getAttribute("data-count"));
+
+          if (!liked) {
+            count++;
+            this.setAttribute("data-liked", "true");
+            this.innerHTML = `❤️ <span class="like-count">${count}</span>`;
+          } else {
+            count--;
+            this.setAttribute("data-liked", "false");
+            this.innerHTML = `🤍 <span class="like-count">${count}</span>`;
+          }
+
+          this.setAttribute("data-count", count);
+        });
+
+        saveBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+
+          let saved = this.getAttribute("data-saved") === "true";
+
+          if (!saved) {
+            this.setAttribute("data-saved", "true");
+            this.textContent = "🔖 Kaydedildi";
+          } else {
+            this.setAttribute("data-saved", "false");
+            this.textContent = "📑 Kaydet";
+          }
+        });
+
+        commentBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          window.location.href = "note-detail.html?id=" + note.id + "&role=" + role;
+        });
+      });
+
+      noteCount.textContent = filteredNotes.length + " not gösteriliyor";
+      emptyMessage.style.display = filteredNotes.length === 0 ? "block" : "none";
+    }
+
+    departmentFilter.addEventListener("change", function () {
+      updateCourseFilter();
+      renderNotes();
+    });
+
+    courseFilter.addEventListener("change", renderNotes);
+    searchInput.addEventListener("input", renderNotes);
+
+    updateCourseFilter();
+    renderNotes();
+  </script>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medipol Arşiv Sistemi - Not Yükle</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f3f6fb;
+      color: #1f2d3d;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #1f2f6d;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      box-shadow: 4px 0 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-logo {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-logo img {
+      max-width: 100%;
+      max-height: 60px;
+      object-fit: contain;
+    }
+
+    .system-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .system-subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.78);
+      margin-bottom: 26px;
+    }
+
+    .role-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-menu a {
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.25s ease;
+      background: transparent;
+    }
+
+    .sidebar-menu a:hover,
+    .sidebar-menu a.active {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      padding-top: 18px;
+    }
+
+    .main {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 82px;
+      background: white;
+      border-bottom: 1px solid #dde6f1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-left h1 {
+      font-size: 24px;
+      color: #1f2f6d;
+      margin-bottom: 4px;
+    }
+
+    .topbar-left p {
+      font-size: 14px;
+      color: #6b7a90;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-box {
+      background: #eef3fb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #31425e;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #e83c4f;
+      color: white;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    .logout-btn:hover {
+      background: #cf3042;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #1f2f6d, #30489c);
+      color: white;
+      border-radius: 18px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 35px rgba(31, 47, 109, 0.18);
+    }
+
+    .hero-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .hero-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.88);
+      max-width: 850px;
+    }
+
+    .form-card {
+      background: white;
+      border: 1px solid #e4ebf4;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 24px rgba(23, 35, 79, 0.06);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1f2f6d;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #d4dfec;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s ease;
+      background: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #1f2f6d;
+      box-shadow: 0 0 0 3px rgba(31, 47, 109, 0.10);
+    }
+
+    .form-group textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .file-box {
+      border: 2px dashed #c7d4e5;
+      border-radius: 14px;
+      padding: 22px;
+      background: #f8fbff;
+    }
+
+    .file-box input[type="file"] {
+      border: none;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .primary-btn {
+      background: #1f2f6d;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #182557;
+    }
+
+    .secondary-btn {
+      background: #eef3fb;
+      color: #1f2f6d;
+    }
+
+    .secondary-btn:hover {
+      background: #dde7f5;
+    }
+
+    .success-box {
+      display: none;
+      margin-top: 18px;
+      background: #e9f8ef;
+      color: #1f6b3b;
+      border: 1px solid #b7e3c6;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 220px;
+      }
+
+      .main {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .topbar {
+        padding: 16px;
+        height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .content {
+        padding: 18px;
+      }
+
+      .hero-card h2 {
+        font-size: 22px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="https://ankaramedipol.edu.tr/wp-content/uploads/2020/02/ankara-medipol.svg" alt="Medipol Logo">
+      </div>
+
+      <div class="system-title">Medipol Arşiv Sistemi</div>
+      <div class="system-subtitle">Ankara Medipol Üniversitesi</div>
+
+      <div class="role-badge">
+        Aktif Rol: <strong id="sidebarRole">Öğrenci</strong>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" id="dashboardLink">Ana Sayfa</a>
+        <a href="#" class="active">Not Yükle</a>
+        <a href="#" id="favoritesMenuLink">Favoriler</a>
+        <a href="#" id="profileMenuLink">Profil</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        © 2026 Medipol Arşiv Sistemi
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Not Yükleme</h1>
+          <p>Ders notu, belge veya arşiv dosyasını ilgili bölüm ve dersle eşleştirerek yükleyin.</p>
+        </div>
+
+        <div class="topbar-right">
+          <div class="user-box" id="userBox">Rol: Öğrenci</div>
+          <button class="logout-btn" onclick="window.location.href='login.html'">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="hero-card">
+          <h2 id="heroTitle">Not Yükleme Paneli</h2>
+          <p id="heroText">
+            Bu alandan doğru bölümü ve dersi seçerek not yükleyebilirsiniz.
+          </p>
+        </section>
+
+        <section class="form-card">
+          <form id="uploadForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="departmentSelect">Bölüm Seç</label>
+                <select id="departmentSelect" required>
+                  <option value="">Bölüm seçiniz</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="courseSelect">Ders Seç</label>
+                <select id="courseSelect" required>
+                  <option value="">Önce bölüm seçiniz</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <label for="noteTitle">Not Başlığı</label>
+                <input type="text" id="noteTitle" placeholder="Örn: 2025 Vize Notları, Ders Özeti, Sunum Dosyası" required>
+              </div>
+
+              <div class="form-group full">
+                <label for="noteDescription">Açıklama</label>
+                <textarea id="noteDescription" placeholder="Yüklediğiniz not hakkında kısa bir açıklama yazın..."></textarea>
+              </div>
+
+              <div class="form-group full">
+                <label for="fileInput">Dosya Yükle</label>
+                <div class="file-box">
+                  <input type="file" id="fileInput" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-row">
+              <button type="submit" class="primary-btn">Notu Yükle</button>
+              <button type="button" class="secondary-btn" id="backDashboardBtn">Dashboard’a Dön</button>
+            </div>
+          </form>
+
+          <div class="success-box" id="successBox"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get("role") || "student";
+
+    const sidebarRole = document.getElementById("sidebarRole");
+    const userBox = document.getElementById("userBox");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroText = document.getElementById("heroText");
+    const dashboardLink = document.getElementById("dashboardLink");
+    const backDashboardBtn = document.getElementById("backDashboardBtn");
+    const favoritesMenuLink = document.getElementById("favoritesMenuLink");
+    const profileMenuLink = document.getElementById("profileMenuLink");
+
+
+    const departmentSelect = document.getElementById("departmentSelect");
+    const courseSelect = document.getElementById("courseSelect");
+    const uploadForm = document.getElementById("uploadForm");
+    const successBox = document.getElementById("successBox");
+    
+
+
+    if (role === "teacher") {
+      sidebarRole.textContent = "Öğretmen";
+      userBox.textContent = "Rol: Öğretmen";
+      heroTitle.textContent = "Öğretmen Not Yükleme Paneli";
+      heroText.textContent = "Öğretmen olarak ilgili bölüm ve dersi seçip ders materyali, not veya belge yükleyebilirsiniz.";
+    } else {
+      sidebarRole.textContent = "Öğrenci";
+      userBox.textContent = "Rol: Öğrenci";
+      heroTitle.textContent = "Öğrenci Not Yükleme Paneli";
+      heroText.textContent = "Öğrenci olarak ilgili bölüm ve dersi seçip not veya belge yükleyebilirsiniz.";
+    }
+
+    dashboardLink.href = "dashboard.html?role=" + role;
+    favoritesMenuLink.href = "favorites.html?role=" + role;
+    profileMenuLink.href = "profile.html?role=" + role;
+    backDashboardBtn.addEventListener("click", function () {
+      window.location.href = "dashboard.html?role=" + role;
+    });
+
+    const departmentCourses = {
+      
+      "Bilgisayar Mühendisliği (İngilizce)": [
+        "Programming I",
+        "Data Structures",
+        "Algorithms",
+        "Database Systems",
+        "Operating Systems",
+        "Computer Networks"
+      ],
+      "Elektrik-Elektronik Mühendisliği (İngilizce)": [
+        "Circuit Analysis",
+        "Electronics",
+        "Signals and Systems",
+        "Microprocessors",
+        "Control Systems",
+        "Electromagnetics"
+      ],
+      
+    };
+
+    const departments = Object.keys(departmentCourses);
+
+    departments.forEach(department => {
+      const option = document.createElement("option");
+      option.value = department;
+      option.textContent = department;
+      departmentSelect.appendChild(option);
+    });
+
+    departmentSelect.addEventListener("change", function () {
+      const selectedDepartment = this.value;
+      const courses = departmentCourses[selectedDepartment] || [];
+
+      courseSelect.innerHTML = '<option value="">Ders seçiniz</option>';
+
+      courses.forEach(course => {
+        const option = document.createElement("option");
+        option.value = course;
+        option.textContent = course;
+        courseSelect.appendChild(option);
+      });
+    });
+
+    uploadForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const selectedDepartment = departmentSelect.value;
+      const selectedCourse = courseSelect.value;
+      const noteTitle = document.getElementById("noteTitle").value;
+      const fileInput = document.getElementById("fileInput");
+      const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "Dosya seçilmedi";
+
+      successBox.style.display = "block";
+      successBox.innerHTML = `
+        <strong>Başarılı!</strong><br>
+        "${noteTitle}" başlıklı not, <strong>${selectedDepartment}</strong> / <strong>${selectedCourse}</strong> alanına yüklenmek üzere hazırlandı.<br>
+        Seçilen dosya: <strong>${fileName}</strong>
+      `;
+
+      uploadForm.reset();
+      courseSelect.innerHTML = '<option value="">Önce bölüm seçiniz</option>';
+    });
+  </script>
+
+</body>
+</html>
